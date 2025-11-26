@@ -1,0 +1,28 @@
+asyncio.run(main()) pokreće event loop i izvršava korutinu main().
+
+Unutar main() pozivaju se asyncio.create_task(timer(...)) tri puta.
+Za svaki timer stvara se Task objekt i svaki Task odmah ulazi u stanje READY.
+
+Event loop zatim uzima taskove iz reda i pokreće ih. Svaki timer ispisuje
+početnu poruku, a čim dođe do await asyncio.sleep(1), korutina prelazi u
+stanje WAITING (spavanje na 1 sekundu).
+
+Nakon što istekne 1 sekunda, asyncio.sleep probudi odgovarajući task i on
+se vraća u stanje READY. Event loop zatim ponovno dobiva taj task i
+korutina postaje RUNNING te izvršava sljedeći korak odbrojavanja.
+
+Taskovi se tako izmjenjuju: RUNNING → WAITING → READY, ovisno o tome
+izvršava li se kod ili čeka na sleep. Taj se ciklus ponavlja sve dok
+odbrojavanje pojedinog timera ne dođe do 0.
+
+Kada countdown padne na 0, timer ispisuje "Vrijeme je isteklo!" i funkcija
+se završava. Task prelazi u stanje DONE.
+
+U međuvremenu, main() čeka pomoću await asyncio.gather(*timers). gather se
+dovršava tek kada su svi timer taskovi u stanju DONE, što znači da su svi
+timers završili svoje odbrojavanje.
+
+Čim Timer 3 (najduži) završi, gather se dovršava, main() se završava i
+asyncio.run() zatvara event loop.
+
+Sve korutine su sada u stanju DONE i event loop nema više zakazanih zadataka.

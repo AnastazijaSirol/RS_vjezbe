@@ -1,0 +1,8 @@
+Dovoljno je koristiti asyncio.create_task za fetch_data(2). Time se korutina registrira u event loop kao zadatak koji se treba izvršiti. 
+Event loop zatim automatski pokreće sve zakazane taskove i izvršava ih konkurentno, bez potrebe da ih awaitamo u main funkciji.
+
+Zbog toga se ispis unutar fetch_data(2) normalno pojavi jer je task aktivan i izvršava se u pozadini dok main čeka neko drugo awaitanje.
+
+await je potreban samo ako želimo dohvatiti povratnu vrijednost taska, ali nije potreban da bi se task izvršio do kraja ili da bi se pojavio 
+njegov ispis. Osim toga, prije nego event loop završi asyncio automatski dovršava sve aktivne taskove, pa će se i fetch_data(2) u 
+potpunosti izvršiti i bez awaita.
