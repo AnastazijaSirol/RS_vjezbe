@@ -17,13 +17,8 @@ async def simulate_movement(sec, frame_rate):
 async def main():
     '''result = await simulate_movement(2, 3)
     print(result)'''
-    jedan = asyncio.create_task(simulate_movement(1, 30))
-    dva = asyncio.create_task(simulate_movement(2, 30))
-    tri = asyncio.create_task(simulate_movement(3, 30))
-    cetri = asyncio.create_task(simulate_movement(4, 30))
-    pet = asyncio.create_task(simulate_movement(5, 30))
     
-    positions = [jedan, dva, tri, cetri, pet]
+    positions = [asyncio.create_task(x, 30) for x in range(5)]
 
     rezultat = await asyncio.gather(*positions)
 
@@ -35,16 +30,26 @@ async def main():
 
     prvih_50 = normal[:50]
 
-    pozvani_50 = [update_camera_location(instanca, x, y) for (x, y) in prvih_50]
+    #pozvani_50 = [update_camera_location(instanca, x, y) for (x, y) in prvih_50]
 
-    await asyncio.gather(*pozvani_50)
+    #await asyncio.gather(*pozvani_50)
+
+    udaljenost = [euclidean_distance((0, 0), (x, y)) for (x, y) in prvih_50]
+
+    print(await asyncio.gather(*udaljenost))
 
     # await update_camera_location(instanca, 5, 5)
-
+import math
 
 async def update_camera_location(instance, x, y):
     instance.update_location(x, y)
     instance.info()
+
+def euclidean_distance(p1, p2):
+    (x1, x2)= p1
+    (y1, y2) = p2
+    dist = math.sqrt((x2-x1)**2 + (y2-y1)**2)
+    return round(dist, 2)
 
 if __name__ == "__main__":
     asyncio.run(main())
