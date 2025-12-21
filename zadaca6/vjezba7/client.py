@@ -20,7 +20,7 @@ async def main():
     print("Rezultat zbroja:", zbroj_result)
     print("Rezultat umnoška:", umnozak_result)
 
-    print("\nSekvencijalno")
+    print("Sekvencijalno")
     payload_div = {"zbroj": zbroj_result, "umnozak": umnozak_result}
     rezultat_div = await fetch("/kolicnik", 8085, payload_div)
     print("Rezultat količnika:", rezultat_div)
